@@ -17,6 +17,7 @@
 			margin: 0;
 			overflow: hidden;
 			height: 100vh;
+			background: black;
 		}
 
 		canvas {
@@ -66,11 +67,6 @@
 			currentPicture = [];
 			full = [];
 			howMany = 0;
-		}
-
-		const getRandomBlue = () => {
-			const hue = (Math.random() * 15) + 40;
-			return `hsl(221, 50%, ${hue}%)`;
 		}
 
 		const pushToFullIfNeeded = (key) => {
@@ -159,7 +155,7 @@
 			const [toX, toY] = points[1];
 
 			// draw point
-			ctx.strokeStyle = getRandomBlue();
+			ctx.strokeStyle = 'rgba(255,255,255,.5)';
 			ctx.beginPath();
 			ctx.moveTo(fromX, fromY);
 			ctx.lineTo(toX, toY);
