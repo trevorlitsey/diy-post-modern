@@ -16,8 +16,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<script src="canvas.js"></script>
-	<script src="../pressure.js"></script>
+	<script src="../js/pressure.js"></script>
 	<title>sadness.online/sol 86</title>
 </head>
 
@@ -47,8 +46,24 @@
 
 		let currentPicture = [];
 
-		const handleResize = () =>
-			resetCanvas(canvas, ctx);
+		const resetCanvas = () => {
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			ctx.lineJoin = 'round';
+			ctx.lineCap = 'round';
+			ctx.lineWidth = .2;
+		}
+
+		const drawLine = (points) => {
+			const [[fromX, fromY], [toX, toY]] = points;
+
+			// draw point
+			ctx.strokeStyle = 'rgb(73, 73, 73)';
+			ctx.beginPath();
+			ctx.moveTo(fromX, fromY);
+			ctx.lineTo(toX, toY);
+			ctx.stroke();
+		}
 
 		const getNewRadius = () => Math.random() * 2 + 9;
 
@@ -90,7 +105,7 @@
 		}
 
 		const redraw = () => {
-			handleResize();
+			resetCanvas();
 			if (!currentPicture) return;
 			currentPicture.forEach(points => {
 				drawLine(points);
@@ -101,11 +116,15 @@
 			change: function (force) {
 				if (force === 1 && currentPicture.length >= 10000) return;
 				howMany = Math.floor(force * 10000);
-				console.log(currentPicture.length);
-
 				handleDraw();
 			}
 		});
+
+		const handleResize = () => {
+			resetCanvas();
+			currentPicture = [];
+		}
+
 
 		window.addEventListener('load', handleResize);
 		window.addEventListener('resize', handleResize);

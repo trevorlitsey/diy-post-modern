@@ -2,6 +2,7 @@
 
 <head>
 	<title> __ albers </title>
+	<script src="../js/iphoneFix.js"></script>
 </head>
 
 <body>
@@ -37,7 +38,6 @@
 
 		.one {
 			height: 100vh;
-			/* min-height: 500px; */
 			background: rgb(5, 100, 199);
 			align-items: flex-end;
 		}
@@ -60,13 +60,10 @@
 
 	<script>
 
-		// ugh iphones
-		const ua = window.navigator.userAgent;
-		const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-		const webkit = !!ua.match(/WebKit/i);
-		const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-		if (iOSSafari) document.querySelector('.one').style.height = '88vh';
+		// fix height if on iphone safair
+		fixHeightForIphoneScreen(document.querySelector('.one'));
 
+		// go on
 		const colors = [[5, 100, 199], [16, 118, 223], [60, 138, 220]];
 
 		function getRandomBlue() {
