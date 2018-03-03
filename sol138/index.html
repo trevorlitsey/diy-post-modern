@@ -39,13 +39,6 @@
 
 		const centerPoint = new paper.Point(paper.view.center)
 
-		getRandomGray = () => {
-			const hue = Math.random() * 100;
-			hue >= 50 ? backgroundColor = 'black' : backgroundColor = 'white';
-			document.body.style.background = backgroundColor;
-			return `hsl(0, 0%, ${hue}%)`;
-		}
-
 		const startingPoints = {}
 
 		const updateStartingPoints = () => {
@@ -94,16 +87,6 @@
 				const startingPoint = startingPoints[key];
 				circles[key].forEach(circle => {
 					circle.position = startingPoint;
-				})
-			});
-		}
-
-		paper.view.onClick = (event) => {
-			// On each frame, rotate the path by 3 degrees:
-			const newGray = getRandomGray();
-			Object.keys(startingPoints).forEach(key => {
-				circles[key].forEach(circle => {
-					circle.strokeColor = newGray;
 				})
 			});
 		}
