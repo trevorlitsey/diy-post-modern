@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>__ sol 138</title>
+	<script src="../js/paper-core.js"></script>
+</head>
+
+<body>
+
+	<canvas resize></canvas>
+
+
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+
+		canvas {
+			height: 100vh;
+			width: 100vw;
+		}
+	</style>
+
+	<script>
+
+		var canvas = document.querySelector('canvas');
+		paper.setup(canvas);
+
+		const width = canvas.width;
+		const height = canvas.height;
+		let increment = 12;
+
+		let currentPicture = [];
+
+		const centerPoint = new paper.Point(paper.view.center)
+
+		getRandomGray = () => {
+			const hue = Math.random() * 100;
+			hue >= 50 ? backgroundColor = 'black' : backgroundColor = 'white';
+			document.body.style.background = backgroundColor;
+			return `hsl(0, 0%, ${hue}%)`;
+		}
+
+		const startingPoints = {}
+
+		const updateStartingPoints = () => {
+			startingPoints.up = new paper.Point(window.innerWidth / 2, 0);
+			startingPoints.right = new paper.Point(window.innerWidth, window.innerHeight / 2);
+			startingPoints.down = new paper.Point(window.innerWidth / 2, window.innerHeight);
+			startingPoints.left = new paper.Point(0, window.innerHeight / 2);
+			startingPoints.center = new paper.Point(paper.view.center);
+		}
+		updateStartingPoints()
+
+		let circles = {
+			up: [],
+			right: [],
+			down: [],
+			left: [],
+			center: []
+		};
+
+		const drawPicture = () => {
+
+		}
+
+		Object.keys(startingPoints).forEach(key => {
+			const startingPoint = startingPoints[key];
+
+			let measurement;
+			if (key === 'up' || key === 'down') {
+				measurement = window.innerHeight * 12;
+			} else if (key === 'left' || key === 'right') {
+				measurement = window.innerWidth * 2;
+			} else {
+				measurement = window.innerHeight + window.innerWidth;
+			}
+
+			for (let i = 0; i < measurement; i += increment) {
+				const circle = new paper.Path.Circle(startingPoint, 10 + i);
+				circle.strokeColor = 'rgba(0,0,0,0.7)';
+				circles[key].push(circle);
+			}
+		})
+
+		paper.view.onResize = (event) => {
+			updateStartingPoints();
+			Object.keys(startingPoints).forEach(key => {
+				const startingPoint = startingPoints[key];
+				circles[key].forEach(circle => {
+					circle.position = startingPoint;
+				})
+			});
+		}
+
+		paper.view.onClick = (event) => {
+			// On each frame, rotate the path by 3 degrees:
+			const newGray = getRandomGray();
+			Object.keys(startingPoints).forEach(key => {
+				circles[key].forEach(circle => {
+					circle.strokeColor = newGray;
+				})
+			});
+		}
+
+		document.addEventListener('touchstart', function (e) {
+			e.preventDefault();
+		})
+
+	</script>
+
+
+</body>
+
+</html>
