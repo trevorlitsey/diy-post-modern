@@ -2,7 +2,16 @@
 <html lang="en">
 
 <head>
-	<!-- https://collections.lacma.org/node/155378 -->
+
+	<!-- 
+		On a Clear Day
+		Agnes Martin
+		Oregon, 1973
+		Thirty screenprints printed in gray on cream Japan paper; 
+		white Schoeller Parole paper; black leather-faced cardboard box
+		https://collections.lacma.org/node/155378 
+	-->
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -64,19 +73,13 @@
 		}
 
 		const drawCanvas = (coords) => {
-
 			drawings.removeChildren();
 			const measurement = getWidth();
-			console.log(measurement);
-
-
 			const strokeColor = 'HSLA(342, 0%, 60%, .8)';
 			const margin = 5;
 			for (let i = 0; i < coords.x; i++) {
 				const padding = Math.round(coords.padding.x * (measurement / (coords.x - 1)) + (margin * 2 + 1));
 				const xCoord = Math.round(i * ((measurement - padding) / (coords.x - 1)) + (padding / 2));
-				console.log(xCoord);
-
 				const pointA = new p.Point(xCoord, 0 + margin)
 				const pointB = new p.Point(xCoord, measurement - margin)
 				const path = new p.Path(pointA, pointB);
@@ -119,7 +122,6 @@
 		handleClick = (e) => {
 			e && e.preventDefault()
 			i === days.length - 1 ? i = 0 : i++;
-			console.log(i);
 			drawCurrentDrawing();
 		}
 
@@ -140,7 +142,6 @@
 		window.addEventListener('resize', handleResize);
 		window.addEventListener('click', handleClick);
 		window.addEventListener('touchstart', handleClick);
-
 
 		var docWidth = document.documentElement.offsetWidth;
 
