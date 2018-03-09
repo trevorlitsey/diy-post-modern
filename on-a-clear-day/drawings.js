@@ -1,15 +1,8 @@
-const strokeColor = 'HSLA(342, 0%, 60%, .8)';
-
-const color = {
-	x: strokeColor,
-	y: strokeColor,
-	border: strokeColor,
-}
 
 const width = {
-	x: 1,
-	y: 1,
-	border: 1,
+	x: 1.8,
+	y: 2.2,
+	border: 2,
 }
 
 const two = {
@@ -19,7 +12,6 @@ const two = {
 		x: 0,
 		y: 0,
 	},
-	color,
 	width,
 }
 
@@ -30,7 +22,6 @@ const three = {
 		x: 0,
 		y: 0,
 	},
-	color,
 	width,
 }
 
@@ -41,10 +32,9 @@ const four = {
 		x: 0,
 		y: 0,
 	},
-	color,
 	width: {
-		x: .8,
-		y: 2,
+		x: 1,
+		y: 2.2,
 		border: 3,
 	}
 }
@@ -56,14 +46,12 @@ const five = {
 		x: 0,
 		y: 0,
 	},
-	color,
 	width: {
-		x: .8,
+		x: 1,
 		y: 2,
 		border: 3,
 	}
 }
-
 
 const six = {
 	x: 0,
@@ -72,12 +60,7 @@ const six = {
 		x: 0,
 		y: 1,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1.2,
-	}
+	width,
 }
 
 const seven = {
@@ -87,12 +70,7 @@ const seven = {
 		x: 0,
 		y: 1,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1.2,
-	}
+	width,
 }
 
 const eight = {
@@ -102,12 +80,7 @@ const eight = {
 		x: 0,
 		y: 1,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1.2,
-	}
+	width,
 }
 
 const nine = {
@@ -117,12 +90,7 @@ const nine = {
 		x: 0,
 		y: 1,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1.2,
-	}
+	width,
 }
 
 const ten = {
@@ -132,12 +100,7 @@ const ten = {
 		x: 0,
 		y: 1,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1.2,
-	}
+	width,
 }
 
 const eleven = {
@@ -147,12 +110,7 @@ const eleven = {
 		x: .8,
 		y: .9,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1,
-		border: 1,
-	}
+	width,
 }
 
 
@@ -163,12 +121,7 @@ const twelve = {
 		x: .8,
 		y: 1,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1,
-		border: 1,
-	}
+	width,
 }
 
 const thirteen = {
@@ -178,12 +131,7 @@ const thirteen = {
 		x: 0,
 		y: 0,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 2,
-		border: 2,
-	}
+	width,
 }
 
 const fourteen = {
@@ -193,12 +141,7 @@ const fourteen = {
 		x: 1.1,
 		y: 1,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1,
-		border: 1,
-	}
+	width,
 }
 
 const fifteen = {
@@ -208,12 +151,7 @@ const fifteen = {
 		x: .8,
 		y: 1.6,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1,
-		border: 1,
-	}
+	width,
 }
 
 const sixteen = {
@@ -223,12 +161,7 @@ const sixteen = {
 		x: .84,
 		y: .76,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1,
-		border: 1,
-	}
+	width,
 }
 
 const seventeen = {
@@ -238,12 +171,7 @@ const seventeen = {
 		x: 1.8,
 		y: .6,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1,
-	}
+	width,
 }
 
 const eighteen = {
@@ -253,12 +181,7 @@ const eighteen = {
 		x: .4,
 		y: 1.6,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1,
-	}
+	width,
 }
 
 
@@ -269,12 +192,7 @@ const nineteen = {
 		x: .9,
 		y: .7,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1,
-	}
+	width,
 }
 
 const twenty = {
@@ -284,12 +202,7 @@ const twenty = {
 		x: 1.6,
 		y: .96,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1,
-	}
+	width,
 }
 
 const twentyOne = {
@@ -299,12 +212,7 @@ const twentyOne = {
 		x: 1.4,
 		y: .9,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1,
-	}
+	width,
 }
 
 const twentyTwo = {
@@ -314,12 +222,7 @@ const twentyTwo = {
 		x: 0,
 		y: 0,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 2,
-	}
+	width,
 }
 
 const twentyThree = {
@@ -329,12 +232,7 @@ const twentyThree = {
 		x: .8,
 		y: .6,
 	},
-	color,
-	width: {
-		x: 1,
-		y: 1.2,
-		border: 1.2,
-	}
+	width,
 }
 
 const twentyFour = {
@@ -344,12 +242,7 @@ const twentyFour = {
 		x: 0,
 		y: 0,
 	},
-	color,
-	width: {
-		x: 1.2,
-		y: 1.4,
-		border: 2.2,
-	}
+	width,
 }
 
 const twentyFive = {
@@ -359,12 +252,7 @@ const twentyFive = {
 		x: 0,
 		y: 0,
 	},
-	color,
-	width: {
-		x: 1.2,
-		y: 1.4,
-		border: 2.2,
-	}
+	width,
 }
 
 const twentySix = {
@@ -374,12 +262,7 @@ const twentySix = {
 		x: 0,
 		y: 0,
 	},
-	color,
-	width: {
-		x: 1.2,
-		y: 1.4,
-		border: 2.2,
-	}
+	width,
 }
 
 const twentySeven = {
@@ -389,12 +272,7 @@ const twentySeven = {
 		x: 0,
 		y: 0,
 	},
-	color,
-	width: {
-		x: 1.2,
-		y: 1.4,
-		border: 2.2,
-	}
+	width,
 }
 
 const twentyEight = {
@@ -404,12 +282,7 @@ const twentyEight = {
 		x: 0,
 		y: 0,
 	},
-	color,
-	width: {
-		x: 1.2,
-		y: 1.4,
-		border: 2.2,
-	}
+	width,
 }
 
 const twentyNine = {
@@ -419,12 +292,7 @@ const twentyNine = {
 		x: 0,
 		y: 0,
 	},
-	color,
-	width: {
-		x: 1.2,
-		y: 1.4,
-		border: 2.2,
-	}
+	width,
 }
 
 const paintings = [

@@ -34,10 +34,10 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			padding: 5%;
 		}
 
 		canvas {
-			margin: 5%;
 			height: var(--size);
 			width: var(--size);
 		}
@@ -45,69 +45,86 @@
 
 	<script>
 
+		const p = paper;
+
 		const canvas = document.querySelector('canvas');
 		fixHeightForIphoneScreen(document.body);
 
-		const p = paper;
 		p.setup(canvas);
 
 		const drawings = new p.Group();
+		drawings.applyMatrix = false;
 
-		const calcWhichIsSmaller = () => {
-			return canvas.offsetHeight > canvas.offsetWidth
+		const getWidth = () => {
+			return canvas.width < canvas.offsetWidth
 				?
-				Math.round(canvas.offsetWidth)
+				canvas.width
 				:
-				Math.round(canvas.offsetHeight);
+				canvas.offsetWidth;
 		}
 
 		const drawCanvas = (coords) => {
+
 			drawings.removeChildren();
-			const measurement = calcWhichIsSmaller();
+			const measurement = getWidth();
+			console.log(measurement);
+
+
+			const strokeColor = 'HSLA(342, 0%, 60%, .8)';
 			const margin = 5;
 			for (let i = 0; i < coords.x; i++) {
-				const padding = coords.padding.x * (measurement / (coords.x - 1)) + margin * 2;
-				const xCoord = i * ((measurement - padding) / (coords.x - 1)) + (padding / 2);
+				const padding = Math.round(coords.padding.x * (measurement / (coords.x - 1)) + (margin * 2 + 1));
+				const xCoord = Math.round(i * ((measurement - padding) / (coords.x - 1)) + (padding / 2));
+				console.log(xCoord);
+
 				const pointA = new p.Point(xCoord, 0 + margin)
 				const pointB = new p.Point(xCoord, measurement - margin)
 				const path = new p.Path(pointA, pointB);
-				if (i === 0 || i === coords.x - 1) {
-					path.strokeColor = coords.color.border;
+				if (coords.width.border && (i === 0 || i === coords.x - 1)) {
 					path.strokeWidth = coords.width.border;
 				} else {
-					path.strokeColor = coords.color.x;
 					path.strokeWidth = coords.width.x;
 				}
+				path.strokeColor = strokeColor;
 				drawings.addChild(path);
 			}
 
 			for (let j = 0; j < coords.y; j++) {
-				const padding = coords.padding.y * (measurement / (coords.y - 1)) + margin * 2;
+				const padding = coords.padding.y * (measurement / (coords.y - 1)) + (margin * 2 + 1);
 				const yCoord = j * ((measurement - padding) / (coords.y - 1)) + (padding / 2);
 				const pointA = new p.Point(0 + margin, yCoord)
 				const pointB = new p.Point(measurement - margin, yCoord)
 				const path = new p.Path(pointA, pointB);
 				if (j === 0 || j === coords.y - 1) {
-					path.strokeColor = coords.color.border;
 					path.strokeWidth = coords.width.border;
 				} else {
-					path.strokeColor = coords.color.y;
 					path.strokeWidth = coords.width.y;
 				}
+				path.strokeColor = strokeColor;
 				drawings.addChild(path)
 			}
-
+			drawings.fitBounds(p.view.bounds);
+			drawings.scale(.96);
+			drawings.position = p.view.center;
 		}
 
 		const days = getDrawings();
-		drawCanvas(days[0]);
 
-		let i = 1;
-		handleClick = (e) => {
-			e.preventDefault()
+		let i = 0;
+		const drawCurrentDrawing = () => {
 			const drawing = days[i];
 			drawCanvas(drawing);
+		}
+
+		handleClick = (e) => {
+			e && e.preventDefault()
 			i === days.length - 1 ? i = 0 : i++;
+			console.log(i);
+			drawCurrentDrawing();
+		}
+
+		p.view.onResize = () => {
+			handleResize();
 		}
 
 		handleResize = () => {
@@ -116,10 +133,11 @@
 				document.documentElement.style.setProperty(`--size`, '80vw')
 				:
 				document.documentElement.style.setProperty(`--size`, '80vh');
+			drawCurrentDrawing();
 		}
 
-		window.addEventListener('resize', handleResize);
 		window.addEventListener('load', handleResize);
+		window.addEventListener('resize', handleResize);
 		window.addEventListener('click', handleClick);
 		window.addEventListener('touchstart', handleClick);
 
