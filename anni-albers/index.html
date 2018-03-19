@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<script src="../js/paper-core.js"></script>
+	<script src="../js/iphoneFix.js"></script>
+	<title>__ anni albers</title>
+</head>
+
+<body>
+
+	<div class="wrapper">
+		<canvas></canvas>
+	</div>
+
+
+	<style>
+		*,
+		*:before,
+		*:after {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			background: HSLA(44, 32%, 82%, 1.00);
+		}
+
+		.wrapper {
+			height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		canvas {
+			height: 90%;
+			width: 90%;
+		}
+	</style>
+
+	<script>
+
+		const canvas = document.querySelector('canvas');
+
+		fixHeightForIphoneScreen(document.querySelector('.wrapper'));
+		const p = paper;
+		p.setup(canvas);
+
+
+		const padding = 20;
+		const radius = 36;
+
+		const colors = [
+			'HSLA(90, 5 %, 7 %, 1.00)', // black
+			'HSLA(34, 26%, 75%, 1.00)', // gray
+			'HSLA(44, 32%, 82%, 1)',
+			'HSLA(44, 32%, 82%, 1)',
+		]
+
+		const getCanvasWidth = () => {
+			return Math.round(window.innerWidth * .9);
+		}
+
+		const getCanvasHeight = () => {
+			return Math.round(window.innerHeight * .9);
+		}
+
+		function paintCanvas() {
+			p.view && p.view.remove();
+			p.setup(canvas);
+			const group = new p.Group();
+
+			const [canvasWidth, canvasHeight] = [getCanvasWidth(), getCanvasHeight()];
+			const [triangleWidth, triangleHeight] = [60, 35]
+			const rows = Math.floor((canvasHeight - padding * 2) / triangleHeight) + 1;
+			const columns = Math.floor((canvasWidth - padding * 2) / triangleWidth) + 1;
+
+			const tally = [];
+			let lastOffSet;
+			for (let y = 0; y < canvasHeight - padding * 2; y += triangleHeight) {
+				const offSet = Math.random() > .5;
+				for (let x = offSet ? 0 : triangleWidth * .5; x < canvasWidth - padding * 2; x += triangleWidth) {
+
+					// direction
+					let flip = false;
+
+					if (tally[tally.length - columns] !== undefined) {
+						if (!tally[tally.length - columns]) {
+							flip = false;
+						} else if ((offSet || lastOffSet) && (!tally[tally.length - columns - 1] || !tally[tally.length - columns + 1])) {
+							flip = false;
+						} else {
+							flip = Math.random() * 1 >= .5;
+						}
+					}
+
+					// sometimes skip if flip is false;
+					if (flip || (!flip && Math.random() > .4)) {
+						const point = new p.Point(x, y);
+						const triangle = new p.Path();
+						triangle.add(new p.Point(triangleWidth / 2, 0));
+						triangle.add(new p.Point(0, triangleHeight));
+						triangle.add(new p.Point(triangleWidth, triangleHeight));
+						triangle.closed = true;
+						triangle.translate(point);
+						flip && triangle.rotate(180);
+						// color
+						const color = colors[Math.floor(Math.random() * 3)];
+						triangle.fillColor = color;
+						// add to drawing
+						group.addChild(triangle);
+					} else {
+						// still keep track of our tally though!
+						flip = true;
+					}
+					tally.push(flip);
+				}
+				lastOffSet = offSet;
+			}
+			group.fitBounds(p.view.bounds);
+			group.scale(.96);
+			group.position = p.view.center;
+			console.log(tally);
+
+		}
+
+		window.addEventListener('load', paintCanvas);
+		window.addEventListener('resize', paintCanvas);
+		window.addEventListener('click', paintCanvas);
+		window.addEventListener('touchstart', paintCanvas);
+
+
+	</script>
+
+
+</body>
+
+</html>
