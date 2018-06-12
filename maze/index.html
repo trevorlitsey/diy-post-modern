@@ -1,0 +1,87 @@
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>__ maze</title>
+</head>
+
+<body>
+
+	<canvas></canvas>
+
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+
+	<script>
+
+		const canvas = document.querySelector('canvas');
+		const context = canvas.getContext('2d');
+
+		const step = 20;
+
+		let currentAnimationFrame;
+
+		function draw({ x, y, width, height }) {
+
+			context.clearRect(x, y, width, height);
+			context.beginPath();
+			const direction = Math.random() >= .5;
+
+			if (direction) {
+				context.moveTo(x, y);
+				context.lineTo(x + width, y + height);
+			} else {
+				context.moveTo(x + width, y);
+				context.lineTo(x, y + height);
+			}
+
+			context.stroke()
+		}
+
+		function paintPicture(picture) {
+			if (picture.length === 0) return getPicture();
+			const index = Math.floor(Math.random() * picture.length);
+			draw(picture[index])
+			picture.splice(index, 1)
+			currentAnimationFrame = window.requestAnimationFrame(() => paintPicture(picture))
+		}
+
+		function getPicture() {
+			const picture = [];
+			for (let x = 0; x < window.innerWidth; x += step) {
+				for (let y = 0; y < window.innerHeight; y += step) {
+					picture.push({ x, y, width: step, height: step })
+				}
+			}
+			requestAnimationFrame(() => paintPicture(picture))
+		}
+
+		function resize() {
+			cancelAnimationFrame(currentAnimationFrame);
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			context.lineWidth = 2;
+			context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+			context.beginPath();
+			getPicture();
+		}
+
+		window.addEventListener('load', resize)
+		window.addEventListener('resize', resize)
+
+	</script>
+
+</body>
+
+</html>
