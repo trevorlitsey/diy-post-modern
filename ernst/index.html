@@ -24,48 +24,74 @@
 	<script src="../js/paper-core.js"></script>
 	<script>
 
-		const teal = '#73BAB7';
+		const getConfig = () => ({
+			colors: {
+				white: 'white',
+				teal: '#73BAB7',
+				orange: '#BC762D',
+				blue: '#1D3765',
+				green: '#293627',
+				skyGradient: ['#01657D', '#54AABF', '#96CECE', '#C8EAEC', '#E2EEEA', '#E2EEEA', '#E2EEEA', '#E2EEEA'],
+			},
+			spacing: 4,
+			width: window.innerWidth,
+			height: window.innerHeight,
+			group1: {
+				length: Math.round(window.innerHeight * .03),
+			},
+			group2: {
+				length: Math.round(window.innerHeight * .04),
+				withRibbon: true,
+			}
+		})
 
 		const p = paper;
 		const canvas = document.querySelector('canvas');
 
-		p.setup(canvas);
+		drawCanvas(getConfig());
 
-		const group1Position = new p.Point(window.innerWidth / 2, window.innerHeight * .5);
-		const group2Position = new p.Point(window.innerWidth / 2, window.innerHeight * .72);
+		p.view.onResize = () => {
+			requestAnimationFrame((() => drawCanvas(getConfig())))
+		}
 
-		const sky = makeSky();
-		const circle = makeCircle();
-		const group1 = makeBrushGroup({ position: group1Position, length: 16, width: window.innerWidth * .7, color: '#1D3765', strokeWidth: 2 });
-		const group2 = makeBrushGroup({ position: group2Position, length: 26, width: window.innerWidth * .8, color: '#293627', strokeWidth: 2 }, withRibbon = true);
+		// ----------------
+		function drawCanvas(config) {
+			p.setup(canvas);
+			const group1Position = new p.Point(config.width / 2, config.height * .5);
+			const group2Position = new p.Point(config.width / 2, config.height * .72);
 
+			const sky = makeSky(config);
+			const circle = makeCircle(config);
+			const group1 = makeBrushGroup({ position: group1Position, length: config.group1.length, width: config.width * .7, color: config.colors.blue, strokeWidth: 2 });
+			const group2 = makeBrushGroup({ position: group2Position, length: config.group2.length, width: config.width * .8, color: config.colors.green, strokeWidth: 2 }, withRibbon = config.group2.withRibbon);
+		}
 
-		function makeSky() {
+		function makeSky(config) {
 			const path = new p.Path.Rectangle({
 				topLeft: new p.Point(0, 0),
-				bottomRight: new p.Point(window.innerWidth, window.innerHeight * .25),
+				bottomRight: new p.Point(config.width, config.height * .25),
 				// Fill the path with a gradient of three color stops
 				// that runs between the two points we defined earlier:
 				fillColor: {
 					gradient: {
-						stops: ['#01657D', '#54AABF', '#96CECE', '#C8EAEC', '#E2EEEA', '#E2EEEA', '#E2EEEA', '#E2EEEA']
+						stops: config.colors.skyGradient,
 					},
 					origin: new p.Point(0, 0),
-					destination: new p.Point(0, window.innerHeight * .3),
+					destination: new p.Point(0, config.height * .3),
 				}
 			});
 			return path;
 		}
 
-		function makeCircle() {
+		function makeCircle(config) {
 			// circle
-			var shape = new p.Shape.Circle(new p.Point(window.innerWidth / 2, window.innerHeight * .21), window.innerWidth * .19);
-			shape.strokeColor = '#BC762D';
+			var shape = new p.Shape.Circle(new p.Point(config.width / 2, config.height * .21), config.width * .1 + config.height * .06);
+			shape.strokeColor = config.colors.orange;
 
 			// ribbon
-			const segments = getSegments({ length: 14, waveHeight: 10, width: window.innerWidth * .46 });
-			const ribbon = makeRibbon(segments);
-			ribbon.position = new p.Point(window.innerWidth / 2, window.innerHeight * .3)
+			const segments = getSegments({ length: 14, waveHeight: 10, width: config.width * .46 });
+			const ribbon = makeRibbon(segments, { color: config.colors.teal });
+			ribbon.position = new p.Point(config.width / 2, config.height * .3)
 		}
 
 		function makeRibbon(segments, options = {}) {
@@ -74,7 +100,7 @@
 				...options,
 			}
 			const ribbon = new p.Path(segments);
-			ribbon.strokeColor = teal;
+			ribbon.strokeColor = o.color || '#73BAB7';
 			ribbon.strokeWidth = 10;
 			ribbon.smooth({ type: 'asymmetric' });
 			ribbon.position = o.position;
@@ -150,15 +176,11 @@
 		}
 
 		// https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
-		function shadeColor(color, percent) {
-			var f = parseInt(color.slice(1), 16), t = percent < 0 ? 0 : 255, p = percent < 0 ? percent * -1 : percent, R = f >> 16, G = f >> 8 & 0x00FF, B = f & 0x0000FF;
-			return "#" + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
-		}
-
 		function blendColors(c0, c1, p) {
 			var f = parseInt(c0.slice(1), 16), t = parseInt(c1.slice(1), 16), R1 = f >> 16, G1 = f >> 8 & 0x00FF, B1 = f & 0x0000FF, R2 = t >> 16, G2 = t >> 8 & 0x00FF, B2 = t & 0x0000FF;
 			return "#" + (0x1000000 + (Math.round((R2 - R1) * p) + R1) * 0x10000 + (Math.round((G2 - G1) * p) + G1) * 0x100 + (Math.round((B2 - B1) * p) + B1)).toString(16).slice(1);
 		}
+
 
 	</script>
 </body>
