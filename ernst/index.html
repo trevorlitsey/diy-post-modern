@@ -1,0 +1,166 @@
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>__ ernst</title>
+</head>
+
+<body>
+	<canvas resize></canvas>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			width: 100%;
+			height: 100%;
+			background: black;
+		}
+	</style>
+
+	<script src="../js/paper-core.js"></script>
+	<script>
+
+		const teal = '#73BAB7';
+
+		const p = paper;
+		const canvas = document.querySelector('canvas');
+
+		p.setup(canvas);
+
+		const group1Position = new p.Point(window.innerWidth / 2, window.innerHeight * .5);
+		const group2Position = new p.Point(window.innerWidth / 2, window.innerHeight * .72);
+
+		const sky = makeSky();
+		const circle = makeCircle();
+		const group1 = makeBrushGroup({ position: group1Position, length: 16, width: window.innerWidth * .7, color: '#1D3765', strokeWidth: 2 });
+		const group2 = makeBrushGroup({ position: group2Position, length: 26, width: window.innerWidth * .8, color: '#293627', strokeWidth: 2 }, withRibbon = true);
+
+
+		function makeSky() {
+			const path = new p.Path.Rectangle({
+				topLeft: new p.Point(0, 0),
+				bottomRight: new p.Point(window.innerWidth, window.innerHeight * .25),
+				// Fill the path with a gradient of three color stops
+				// that runs between the two points we defined earlier:
+				fillColor: {
+					gradient: {
+						stops: ['#01657D', '#54AABF', '#96CECE', '#C8EAEC', '#E2EEEA', '#E2EEEA', '#E2EEEA', '#E2EEEA']
+					},
+					origin: new p.Point(0, 0),
+					destination: new p.Point(0, window.innerHeight * .3),
+				}
+			});
+			return path;
+		}
+
+		function makeCircle() {
+			// circle
+			var shape = new p.Shape.Circle(new p.Point(window.innerWidth / 2, window.innerHeight * .21), window.innerWidth * .19);
+			shape.strokeColor = '#BC762D';
+
+			// ribbon
+			const segments = getSegments({ length: 14, waveHeight: 10, width: window.innerWidth * .46 });
+			const ribbon = makeRibbon(segments);
+			ribbon.position = new p.Point(window.innerWidth / 2, window.innerHeight * .3)
+		}
+
+		function makeRibbon(segments, options = {}) {
+			const o = {
+				position: new p.Point(0, 0),
+				...options,
+			}
+			const ribbon = new p.Path(segments);
+			ribbon.strokeColor = teal;
+			ribbon.strokeWidth = 10;
+			ribbon.smooth({ type: 'asymmetric' });
+			ribbon.position = o.position;
+			return ribbon;
+		}
+
+		function makeBrushGroup(options = {}, withRibbon = false) {
+			const o = {
+				position: new p.Point(0, 0),
+				color: 'white',
+				spacing: 4,
+				length: 40,
+				width: window.innerWidth,
+				segmentsLength: 30,
+				strokeWidth: 1,
+				...options,
+			}
+			const segments = getSegments({ width: o.width, length: o.segmentsLength, })
+			const lines = Array.from({ length: o.length }, () => makeBrushLine(segments, { color: o.color, strokeWidth: o.strokeWidth }))
+			lines.forEach((line, index) => line.position.y += o.spacing * index);
+
+			const group = new p.Group(lines);
+
+			if (withRibbon) {
+				const ribbon = makeRibbon([...segments.slice(2, segments.length - 2)], { position: o.position })
+				ribbon.position.y += 20;
+				ribbon.bringToFront();
+			}
+
+			group.position = o.position;
+			return group;
+		}
+
+		function makeBrushLine(segments, options = {}) {
+			const o = {
+				color: 'white',
+				strokeWidth: 1,
+				...options,
+			}
+			const path = new p.Path(segments);
+			path.strokeColor = {
+				gradient: {
+					stops: Array.from({ length: 6 }, () => Math.random() > .02 ? o.color : blendColors(o.color, '#fff', 90))
+				},
+				origin: new p.Point(0, 0),
+				destination: new p.Point(window.innerWidth, 0),
+			};
+			path.strokeWidth = o.strokeWidth;
+			path.smooth({ type: 'asymmetric' });
+			return path;
+		}
+
+		function getSegments(options = {}) {
+			const o = {
+				length: 40,
+				padding: 10,
+				width: window.innerWidth,
+				walk: .4,
+				waveHeight: 16,
+				...options,
+			}
+			return Array.from(
+				{ length: o.length },
+				(item, index) => {
+					const walk = index > 0 && index < o.length - 1 ? Math.round(o.width / o.length * Math.random() * o.walk) : 0;
+					const walkDirection = Math.random() > .5;
+
+					const x = index * (o.width - o.padding) / o.length + o.padding + (walkDirection ? walk : -walk);
+					const y = 100 + Math.round(Math.random() * o.waveHeight - (o.waveHeight / 2));
+					return new p.Point(x, y)
+				}
+			);
+		}
+
+		// https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
+		function shadeColor(color, percent) {
+			var f = parseInt(color.slice(1), 16), t = percent < 0 ? 0 : 255, p = percent < 0 ? percent * -1 : percent, R = f >> 16, G = f >> 8 & 0x00FF, B = f & 0x0000FF;
+			return "#" + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
+		}
+
+		function blendColors(c0, c1, p) {
+			var f = parseInt(c0.slice(1), 16), t = parseInt(c1.slice(1), 16), R1 = f >> 16, G1 = f >> 8 & 0x00FF, B1 = f & 0x0000FF, R2 = t >> 16, G2 = t >> 8 & 0x00FF, B2 = t & 0x0000FF;
+			return "#" + (0x1000000 + (Math.round((R2 - R1) * p) + R1) * 0x10000 + (Math.round((G2 - G1) * p) + G1) * 0x100 + (Math.round((B2 - B1) * p) + B1)).toString(16).slice(1);
+		}
+
+	</script>
+</body>
+
+</html>
