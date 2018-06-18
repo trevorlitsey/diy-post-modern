@@ -23,17 +23,29 @@
 	<style>
 		body {
 			margin: 0;
+			background: black;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 
 		canvas {
 			width: 100%;
 			height: 100%;
 			background: black;
+			max-width: 140vh;
+			/* min-height: 100vw; */
 		}
 	</style>
 
 	<script src="../js/paper-core.js"></script>
 	<script>
+
+		const p = paper;
+		const canvas = document.querySelector('canvas');
+		const { innerHeight, innerWidth } = window;
+		canvas.height = innerHeight;
+		canvas.width = innerWidth;
 
 		const getConfig = () => ({
 			colors: {
@@ -45,8 +57,8 @@
 				skyGradient: ['#01657D', '#54AABF', '#96CECE', '#C8EAEC', '#E2EEEA', '#E2EEEA', '#E2EEEA', '#E2EEEA'],
 			},
 			spacing: 4,
-			width: window.innerWidth,
-			height: window.innerHeight,
+			width: canvas.width,
+			height: canvas.height,
 			group1: {
 				length: Math.round(window.innerHeight * .03),
 			},
@@ -56,25 +68,72 @@
 			}
 		})
 
-		const p = paper;
-		const canvas = document.querySelector('canvas');
+		let currentPicture;
 
-		drawCanvas(getConfig());
+
+		currentPicture = drawCanvas(getConfig());
+
 
 		p.view.onResize = () => {
-			requestAnimationFrame((() => drawCanvas(getConfig())))
+			requestAnimationFrame((() => {
+				currentPicture = drawCanvas(getConfig());
+			}))
+		}
+
+		p.view.onFrame = () => {
+
+			if (!currentPicture || Date.now() % 3 === 0) return;
+
+			const deg = .1;
+
+			const changeAmount0 = Array.from({ length: currentPicture.group1.children[0].segments.length }, () => Math.random() > .5 ? +deg : -deg)
+			currentPicture.ribbon1.segments.forEach((segment, index) => {
+				const { x, y } = segment.point;
+				segment.point = new p.Point(x, y + changeAmount0[index]);
+			})
+
+			const changeAmount1 = Array.from({ length: currentPicture.group1.children[0].segments.length }, () => Math.random() > .5 ? +deg : -deg)
+			currentPicture.group1.children.forEach(child => {
+				child.segments.forEach((segment, index) => {
+					const { x, y } = segment.point;
+					segment.point = new p.Point(x, y + changeAmount1[index]);
+				})
+			})
+
+			const changeAmount2 = Array.from({ length: currentPicture.group2.children[0].segments.length }, () => Math.random() > .5 ? +deg : -deg)
+			currentPicture.group2.children.forEach(child => {
+				child.segments.forEach((segment, index) => {
+					const { x, y } = segment.point;
+					segment.point = new p.Point(x, y + changeAmount2[index]);
+
+				})
+			})
+			// ribbon
+			currentPicture.ribbon2.segments.forEach((segment, index) => {
+				const { x, y } = segment.point;
+				segment.point = new p.Point(x, y + changeAmount2[index + 2]);
+			})
 		}
 
 		// ----------------
 		function drawCanvas(config) {
 			p.setup(canvas);
-			const group1Position = new p.Point(config.width / 2, config.height * .5);
-			const group2Position = new p.Point(config.width / 2, config.height * .72);
+			const group1Position = new p.Point(config.width / 2, config.height * .5 + config.width * .02);
+			const group2Position = new p.Point(config.width / 2, config.height * .72 + config.width * .02);
 
 			const sky = makeSky(config);
-			const circle = makeCircle(config);
-			const group1 = makeBrushGroup({ position: group1Position, length: config.group1.length, width: config.width * .7, color: config.colors.blue, strokeWidth: 2 });
-			const group2 = makeBrushGroup({ position: group2Position, length: config.group2.length, width: config.width * .8, color: config.colors.green, strokeWidth: 2 }, withRibbon = config.group2.withRibbon);
+			const { circle, ribbon: ribbon1 } = makeCircle(config);
+			const { group: group1 } = makeBrushGroup({ position: group1Position, length: config.group1.length, width: config.width * .7, color: config.colors.blue, strokeWidth: 2 });
+			const { group: group2, ribbon: ribbon2 } = makeBrushGroup({ position: group2Position, length: config.group2.length, width: config.width * .8, color: config.colors.green, strokeWidth: 2 }, withRibbon = config.group2.withRibbon);
+
+			return {
+				sky,
+				circle,
+				group1,
+				group2,
+				ribbon1,
+				ribbon2,
+			}
 		}
 
 		function makeSky(config) {
@@ -96,23 +155,25 @@
 
 		function makeCircle(config) {
 			// circle
-			var shape = new p.Shape.Circle(new p.Point(config.width / 2, config.height * .21), config.width * .1 + config.height * .06);
-			shape.strokeColor = config.colors.orange;
+			var circle = new p.Shape.Circle(new p.Point(config.width / 2, config.height * .214), config.width * .1 + config.height * .08);
+			circle.strokeColor = config.colors.orange;
 
 			// ribbon
-			const segments = getSegments({ length: 14, waveHeight: 10, width: config.width * .46 });
-			const ribbon = makeRibbon(segments, { color: config.colors.teal });
-			ribbon.position = new p.Point(config.width / 2, config.height * .3)
+			const segments = getSegments({ length: 14, waveHeight: 10, width: circle.bounds.width * 1.2 });
+			const ribbon = makeRibbon(segments, { color: config.colors.teal, strokeWidth: window.innerHeight * .014 + window.innerWidth * .006 });
+			ribbon.position = new p.Point(circle.position.x, circle.position.y + circle.bounds.height * .3);
+			return { circle, ribbon }
 		}
 
 		function makeRibbon(segments, options = {}) {
 			const o = {
 				position: new p.Point(0, 0),
+				strokeWidth: window.innerHeight * .012 + window.innerWidth * .004,
 				...options,
 			}
 			const ribbon = new p.Path(segments);
 			ribbon.strokeColor = o.color || '#73BAB7';
-			ribbon.strokeWidth = 10;
+			ribbon.strokeWidth = o.strokeWidth;
 			ribbon.smooth({ type: 'asymmetric' });
 			ribbon.position = o.position;
 			return ribbon;
@@ -124,7 +185,7 @@
 				color: 'white',
 				spacing: 4,
 				length: 40,
-				width: window.innerWidth,
+				width: canvas.width,
 				segmentsLength: 30,
 				strokeWidth: 1,
 				...options,
@@ -135,14 +196,18 @@
 
 			const group = new p.Group(lines);
 
+			let ribbon;
 			if (withRibbon) {
-				const ribbon = makeRibbon([...segments.slice(2, segments.length - 2)], { position: o.position })
-				ribbon.position.y += 20;
+				ribbon = makeRibbon([...segments.slice(2, segments.length - 2)], { position: o.position })
+				ribbon.position.y += Math.round(window.innerHeight * .012);
 				ribbon.bringToFront();
 			}
 
 			group.position = o.position;
-			return group;
+			return {
+				group,
+				ribbon,
+			}
 		}
 
 		function makeBrushLine(segments, options = {}) {
@@ -157,7 +222,7 @@
 					stops: Array.from({ length: 6 }, () => Math.random() > .02 ? o.color : blendColors(o.color, '#fff', 90))
 				},
 				origin: new p.Point(0, 0),
-				destination: new p.Point(window.innerWidth, 0),
+				destination: new p.Point(canvas.width, 0),
 			};
 			path.strokeWidth = o.strokeWidth;
 			path.smooth({ type: 'asymmetric' });
@@ -168,7 +233,7 @@
 			const o = {
 				length: 40,
 				padding: 10,
-				width: window.innerWidth,
+				width: canvas.width,
 				walk: .4,
 				waveHeight: 16,
 				...options,
