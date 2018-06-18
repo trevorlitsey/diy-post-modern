@@ -48,14 +48,29 @@
 				green: '#293627',
 				skyGradient: ['#01657D', '#54AABF', '#96CECE', '#C8EAEC', '#E2EEEA', '#E2EEEA', '#E2EEEA', '#E2EEEA'],
 			},
-			spacing: 4,
+			changeDeg: .1,
 			width: window.innerWidth,
 			height: window.innerHeight,
+			circle: {
+				position: new p.Point(window.innerWidth / 2, window.innerHeight * .214),
+				radius: window.innerHeight * .165,
+				ribbon: {
+					segmentLength: 14,
+					waveHeight: 10,
+					percentWidthOfCircle: 1.2,
+					strokeWidth: window.innerHeight * .014 + window.innerWidth * .006,
+					yOffset: .3,
+				}
+			},
 			group1: {
 				length: Math.round(window.innerHeight * .03),
+				width: window.innerWidth * .7,
+				position: new p.Point(window.innerWidth / 2, window.innerHeight * .5 + window.innerWidth * .02),
 			},
 			group2: {
 				length: Math.round(window.innerHeight * .04),
+				width: window.innerWidth * .8,
+				position: new p.Point(window.innerWidth / 2, window.innerHeight * .72 + window.innerWidth * .02),
 				withRibbon: true,
 			}
 		})
@@ -75,12 +90,14 @@
 
 			const deg = .1;
 
+			// top circle ribbon
 			const changeAmount0 = Array.from({ length: currentPicture.group1.children[0].segments.length }, () => Math.random() > .5 ? +deg : -deg)
 			currentPicture.ribbon1.segments.forEach((segment, index) => {
 				const { x, y } = segment.point;
 				segment.point = new p.Point(x, y + changeAmount0[index]);
 			})
 
+			// top squiggly group
 			const changeAmount1 = Array.from({ length: currentPicture.group1.children[0].segments.length }, () => Math.random() > .5 ? +deg : -deg)
 			currentPicture.group1.children.forEach(child => {
 				child.segments.forEach((segment, index) => {
@@ -89,6 +106,7 @@
 				})
 			})
 
+			// bottom squiggly group
 			const changeAmount2 = Array.from({ length: currentPicture.group2.children[0].segments.length }, () => Math.random() > .5 ? +deg : -deg)
 			currentPicture.group2.children.forEach(child => {
 				child.segments.forEach((segment, index) => {
@@ -107,13 +125,11 @@
 		// ----------------
 		function drawCanvas(config) {
 			p.setup(canvas);
-			const group1Position = new p.Point(config.width / 2, config.height * .5 + config.width * .02);
-			const group2Position = new p.Point(config.width / 2, config.height * .72 + config.width * .02);
 
 			const sky = makeSky(config);
 			const { circle, ribbon: ribbon1 } = makeCircle(config);
-			const { group: group1 } = makeBrushGroup({ position: group1Position, length: config.group1.length, width: config.width * .7, color: config.colors.blue, strokeWidth: 2 });
-			const { group: group2, ribbon: ribbon2 } = makeBrushGroup({ position: group2Position, length: config.group2.length, width: config.width * .8, color: config.colors.green, strokeWidth: 2 }, withRibbon = config.group2.withRibbon);
+			const { group: group1 } = makeBrushGroup({ position: config.group1.position, length: config.group1.length, width: config.group1.width, color: config.colors.blue, strokeWidth: 2 });
+			const { group: group2, ribbon: ribbon2 } = makeBrushGroup({ position: config.group2.position, length: config.group2.length, width: config.group2.width, color: config.colors.green, strokeWidth: 2 }, withRibbon = config.group2.withRibbon);
 
 			return {
 				sky,
@@ -142,13 +158,13 @@
 
 		function makeCircle(config) {
 			// circle
-			var circle = new p.Shape.Circle(new p.Point(config.width / 2, config.height * .214), config.height * .165);
+			var circle = new p.Shape.Circle(config.circle.position, config.circle.radius);
 			circle.strokeColor = config.colors.orange;
 
 			// ribbon
-			const segments = getSegments({ length: 14, waveHeight: 10, width: circle.bounds.width * 1.2 });
-			const ribbon = makeRibbon(segments, { color: config.colors.teal, strokeWidth: window.innerHeight * .014 + window.innerWidth * .006 });
-			ribbon.position = new p.Point(circle.position.x, circle.position.y + circle.bounds.height * .3);
+			const segments = getSegments({ length: config.circle.ribbon.segmentLength, waveHeight: config.circle.ribbon.waveHeight, width: circle.bounds.width * config.circle.ribbon.percentWidthOfCircle });
+			const ribbon = makeRibbon(segments, { color: config.colors.teal, strokeWidth: config.circle.ribbon.strokeWidth });
+			ribbon.position = new p.Point(circle.position.x, circle.position.y + circle.bounds.height * config.circle.ribbon.yOffset);
 			return { circle, ribbon }
 		}
 
