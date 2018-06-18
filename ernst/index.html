@@ -24,16 +24,12 @@
 		body {
 			margin: 0;
 			background: black;
-			display: flex;
-			align-items: center;
-			justify-content: center;
 		}
 
 		canvas {
 			width: 100%;
 			height: 100%;
 			background: black;
-			max-width: 140vh;
 		}
 	</style>
 
@@ -42,9 +38,6 @@
 
 		const p = paper;
 		const canvas = document.querySelector('canvas');
-		const { innerHeight, innerWidth } = window;
-		canvas.height = innerHeight;
-		canvas.width = innerWidth;
 
 		const getConfig = () => ({
 			colors: {
@@ -56,8 +49,8 @@
 				skyGradient: ['#01657D', '#54AABF', '#96CECE', '#C8EAEC', '#E2EEEA', '#E2EEEA', '#E2EEEA', '#E2EEEA'],
 			},
 			spacing: 4,
-			width: canvas.width,
-			height: canvas.height,
+			width: window.innerWidth,
+			height: window.innerHeight,
 			group1: {
 				length: Math.round(window.innerHeight * .03),
 			},
@@ -71,11 +64,10 @@
 
 		currentPicture = drawCanvas(getConfig());
 
-		p.view.onResize = () => {
-			requestAnimationFrame((() => {
-				currentPicture = drawCanvas(getConfig());
-			}))
-		}
+		window.addEventListener('resize', () => {
+			const config = getConfig();
+			currentPicture = drawCanvas(config);
+		})
 
 		p.view.onFrame = () => {
 
@@ -150,7 +142,7 @@
 
 		function makeCircle(config) {
 			// circle
-			var circle = new p.Shape.Circle(new p.Point(config.width / 2, config.height * .214), config.width * .1 + config.height * .08);
+			var circle = new p.Shape.Circle(new p.Point(config.width / 2, config.height * .214), config.height * .18);
 			circle.strokeColor = config.colors.orange;
 
 			// ribbon
@@ -180,7 +172,7 @@
 				color: 'white',
 				spacing: 4,
 				length: 40,
-				width: canvas.width,
+				width: window.innerWidth,
 				segmentsLength: 30,
 				strokeWidth: 1,
 				...options,
@@ -217,7 +209,7 @@
 					stops: Array.from({ length: 6 }, () => Math.random() > .02 ? o.color : blendColors(o.color, '#fff', 90))
 				},
 				origin: new p.Point(0, 0),
-				destination: new p.Point(canvas.width, 0),
+				destination: new p.Point(window.innerWidth, 0),
 			};
 			path.strokeWidth = o.strokeWidth;
 			path.smooth({ type: 'asymmetric' });
@@ -228,7 +220,7 @@
 			const o = {
 				length: 40,
 				padding: 10,
-				width: canvas.width,
+				width: window.innerWidth,
 				walk: .4,
 				waveHeight: 16,
 				...options,
