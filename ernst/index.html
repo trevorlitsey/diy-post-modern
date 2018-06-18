@@ -34,7 +34,6 @@
 			height: 100%;
 			background: black;
 			max-width: 140vh;
-			/* min-height: 100vw; */
 		}
 	</style>
 
@@ -70,9 +69,7 @@
 
 		let currentPicture;
 
-
 		currentPicture = drawCanvas(getConfig());
-
 
 		p.view.onResize = () => {
 			requestAnimationFrame((() => {
@@ -140,8 +137,6 @@
 			const path = new p.Path.Rectangle({
 				topLeft: new p.Point(0, 0),
 				bottomRight: new p.Point(config.width, config.height * .25),
-				// Fill the path with a gradient of three color stops
-				// that runs between the two points we defined earlier:
 				fillColor: {
 					gradient: {
 						stops: config.colors.skyGradient,
