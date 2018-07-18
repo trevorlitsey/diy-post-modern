@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>__ steven gwon</title>
+</head>
+
+<body>
+	<div id="main">
+	</div>
+
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+
+		#main {
+			height: 100%;
+			width: 100%;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(20px, 1fr));
+			grid-template-rows: repeat(auto-fill, minmax(20px, 1fr));
+			justify-content: center;
+			align-items: center;
+			overflow: hidden;
+		}
+
+		.square {
+			min-height: 20px;
+			border: 1px solid rgba(0, 0, 0, .6);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.circle {
+			border: 1px solid black;
+			background: black;
+			opacity: 0;
+			width: 14px;
+			height: 14px;
+			border-radius: 100%;
+		}
+
+		.circle.o1 {
+			opacity: .1;
+		}
+
+		.circle.o2 {
+			opacity: .2;
+		}
+
+		.circle.o3 {
+			opacity: .3;
+		}
+
+		.circle.o4 {
+			opacity: .4;
+		}
+
+		.circle.o5 {
+			opacity: .5;
+		}
+
+		.circle.o6 {
+			opacity: .6;
+		}
+
+		.circle.o7 {
+			opacity: .7;
+		}
+
+		.circle.o8 {
+			opacity: .8;
+		}
+
+		.circle.o9 {
+			opacity: .9;
+		}
+
+		.circle.o10 {
+			opacity: 1;
+		}
+	</style>
+
+	<script>
+
+		const div = document.querySelector('#main');
+
+		function fillDivWithRandomSquares() {
+			const { rows, columns } = getRowsAndColumns();
+			const squares = rows * columns;
+			const mod = Math.round(Math.random() * window.innerWidth / 20 + 2);
+			requestAnimationFrame(() => {
+				div.innerHTML = Array.from({ length: squares }, (item, index) => `<div id="${index}" class="square"><div class="circle o${Math.round((index % mod) / mod * 10)} "></div></div>`).join('')
+			})
+			setTimeout(fillDivWithRandomSquares, 600)
+		}
+
+		function getRowsAndColumns() {
+			return {
+				rows: Math.round(window.innerHeight / 20),
+				columns: Math.floor(window.innerWidth / 20)
+			}
+		}
+
+		window.addEventListener('load', fillDivWithRandomSquares)
+		window.addEventListener('resize', fillDivWithRandomSquares)
+		window.addEventListener('click', fillDivWithRandomSquares)
+
+	</script>
+</body>
+
+</html>
