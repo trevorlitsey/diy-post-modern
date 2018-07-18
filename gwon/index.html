@@ -110,7 +110,10 @@
 		window.addEventListener('load', fillDivWithRandomSquares)
 		window.addEventListener('resize', fillDivWithRandomSquares)
 		window.addEventListener('click', fillDivWithRandomSquares)
-		window.addEventListener('touchstart', fillDivWithRandomSquares)
+		window.addEventListener('touchstart', (e) => {
+			e.preventDefault();
+			fillDivWithRandomSquares()
+		})
 		window.addEventListener('touchmove', fillDivWithRandomSquares)
 
 	</script>
