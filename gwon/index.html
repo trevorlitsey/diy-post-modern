@@ -98,7 +98,6 @@
 			requestAnimationFrame(() => {
 				div.innerHTML = Array.from({ length: squares }, (item, index) => `<div id="${index}" class="square"><div class="circle o${Math.round((index % mod) / mod * 10)} "></div></div>`).join('')
 			})
-			setTimeout(fillDivWithRandomSquares, 600)
 		}
 
 		function getRowsAndColumns() {
