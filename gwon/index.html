@@ -97,7 +97,7 @@
 		function fillDivWithRandomSquares() {
 			const { rows, columns } = getRowsAndColumns();
 			const squares = rows * columns;
-			const mod = Math.round(Math.random() * window.innerWidth / 20 + 2);
+			const mod = Math.round(Math.random() * window.innerWidth / 20 + 8);
 			requestAnimationFrame(() => {
 				div.innerHTML = Array.from({ length: squares }, (item, index) => `<div id="${index}" class="square"><div class="circle o${Math.round((index % mod) / mod * 10)} "></div></div>`).join('')
 			})
@@ -113,7 +113,6 @@
 		window.addEventListener('load', fillDivWithRandomSquares)
 		window.addEventListener('resize', fillDivWithRandomSquares)
 		window.addEventListener('click', fillDivWithRandomSquares)
-		window.addEventListener('mousemove', fillDivWithRandomSquares)
 		window.addEventListener('touchmove', (e) => {
 			e.preventDefault();
 			fillDivWithRandomSquares()
