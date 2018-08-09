@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+
+<body>
+	<canvas resize></canvas>
+
+
+	<style>
+		:root {
+			--vh: 1vh;
+		}
+
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+
+		canvas {
+			width: 100vw;
+			height: 100vh;
+			height: calc(var(--vh, 1vh) * 100);
+			background: #C5B5A5;
+		}
+	</style>
+
+	<script src="../js//paper-core.js"></script>
+	<script>
+		const canvas = document.querySelector('canvas');
+		const p = paper;
+
+		const c = {
+			colors: {
+				darkBlue: '#5F5C71',
+				lightBlue: '#A79EA0',
+				yellow: '#B0936E',
+			},
+			lineWidth: {
+				regular: 2,
+				bold: 3,
+			},
+			padding: 25,
+			measure: 50,
+		}
+
+
+		function drawCanvas() {
+
+			const group = new p.Group();
+
+			const xPadding = (window.innerWidth % c.measure + c.padding) * 2;
+			const yPadding = (window.innerHeight % c.measure + c.padding) * 2;
+
+			for (let x = xPadding; x < window.innerWidth - xPadding; x += c.measure) {
+				for (let y = yPadding; y < window.innerHeight - yPadding; y += c.measure) {
+
+					const fM = c.measure;
+					const hM = c.measure / 2;
+
+					const d = [
+						[[x + hM, y], [x + hM, y + fM]],
+						[[x, y], [x + fM, y + fM]],
+						[[x, y + hM], [x + fM, y + hM]],
+						[[x + fM, y], [x + fM, y]],
+					][Math.floor(Math.random() * 3)]
+
+					const square = drawSquare(new p.Point(d[0][0], d[0][1]), new p.Point(d[1][0], d[1][1]), {
+						strokeColor: c.colors.darkBlue,
+						strokeWidth: c.lineWidth.bold,
+					});
+				}
+			}
+
+			group.fitBounds(p.view.bounds);
+			// group.scale(.96);
+			// group.position = p.view.center;
+		}
+
+		function drawSquare(pointA, pointB, options) {
+			var path = new p.Path.Line(pointA, pointB);
+			path.strokeColor = options.strokeColor;
+			path.strokeWidth = options.strokeWidth;
+		}
+
+		function init() {
+			p.view && p.view.remove();
+			p.setup(canvas);
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			let vh = window.innerHeight * 0.01;
+			document.documentElement.style.setProperty('--vh', `${vh}px`);
+			drawCanvas();
+		}
+
+		window.addEventListener('load', init);
+		window.addEventListener('resize', init);
+		window.addEventListener('click', init);
+
+	</script>
+</body>
+
+</html>
