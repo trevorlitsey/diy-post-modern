@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- 
+	rules
+	x. vertical lines of different colors do not connect
+	1. n to s and dark blues are weighted most heavily
+	2. dark blues only go north to south
+	3. yellows are weighted heavier towards the bottom of the picture
+	4. two yellows going in divergent directions do not touch
+	5. a yellow will vary rarely touch another color
+	6. yellows should not form groups larger than 3, usually just 2
+
+-->
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,50 +48,103 @@
 		const p = paper;
 
 		const c = {
-			colors: {
-				darkBlue: '#5F5C71',
-				lightBlue: '#A79EA0',
-				yellow: '#B0936E',
-			},
-			lineWidth: {
-				regular: 2,
-				bold: 3,
-			},
-			padding: 25,
-			measure: 50,
+			colors: [
+				'#5F5C71', // darkBlue
+				'#A79EA0', // lightBlue
+				'#B0936E', // yellow
+				'#C5B5A5', // none
+			],
+			lineWidth: 3.2,
+			padding: 200,
+			measure: 30,
 		}
 
 
 		function drawCanvas() {
 
-			const group = new p.Group();
+			const rows = []
 
-			const xPadding = (window.innerWidth % c.measure + c.padding) * 2;
-			const yPadding = (window.innerHeight % c.measure + c.padding) * 2;
+			const xPadding = (window.innerWidth % c.measure + c.padding) / 2;
+			const yPadding = (window.innerHeight % c.measure + c.padding) / 2;
 
-			for (let x = xPadding; x < window.innerWidth - xPadding; x += c.measure) {
-				for (let y = yPadding; y < window.innerHeight - yPadding; y += c.measure) {
+			for (let y = yPadding / 2; y < window.innerHeight - yPadding; y += c.measure) {
+				const row = []
+				for (let x = xPadding / 2; x < window.innerWidth - xPadding; x += c.measure) {
 
-					const fM = c.measure;
-					const hM = c.measure / 2;
+					const { direction: d, directionIndex } = getDirection(x, y);
 
-					const d = [
-						[[x + hM, y], [x + hM, y + fM]],
-						[[x, y], [x + fM, y + fM]],
-						[[x, y + hM], [x + fM, y + hM]],
-						[[x + fM, y], [x + fM, y]],
-					][Math.floor(Math.random() * 3)]
+					const { color, colorIndex } = getColor(directionIndex, x, y, rows, row);
 
 					const square = drawSquare(new p.Point(d[0][0], d[0][1]), new p.Point(d[1][0], d[1][1]), {
-						strokeColor: c.colors.darkBlue,
-						strokeWidth: c.lineWidth.bold,
+						strokeColor: color,
+						strokeWidth: c.lineWidth,
+					});
+					row.push({
+						direction: d,
+						color: colorIndex,
 					});
 				}
+				rows.push(row);
+			}
+		}
+
+		function getColor(directionIndex, x, y, rows = [], currentRow = []) {
+			let colorIndex;
+
+			const lastRow = rows.length - 1 > 0 ? rows.length - 1 : 0;
+			const thisColumn = currentRow.length
+
+			const colorAbove = rows[lastRow] && rows[lastRow][thisColumn] ? rows[lastRow][thisColumn].color : null;
+			const colorAboveAbove = rows[lastRow - 1] && rows[lastRow - 1][thisColumn] ? rows[lastRow - 1][thisColumn].color : null;
+
+			switch (directionIndex) {
+				case 0:
+					const roll1 = Math.floor(Math.random() * 4);
+					const roll2 = Math.floor(Math.random() * 4);
+					colorIndex = roll1 === 0 || roll2 === 0 ? 0 : Math.floor(Math.random() * 4);
+
+					// vertical lines of different colors should not connect
+					if ((colorAbove !== null &&
+						colorAbove !== 3 &&
+						colorIndex !== colorAbove) || (colorIndex === colorAbove && colorIndex === colorAboveAbove)) {
+						return getColor(directionIndex = Math.floor(Math.random() * 3), x, y, rows, currentRow);
+					}
+
+					break;
+				case 1:
+					colorIndex = Math.floor(Math.random() * 3 + 1);
+					break;
+				case 2:
+					colorIndex = Math.floor(Math.random() * 3 + 1);
+					break;
+				case 3:
+					colorIndex = Math.floor(Math.random() * 3 + 1);
+					break;
 			}
 
-			group.fitBounds(p.view.bounds);
-			// group.scale(.96);
-			// group.position = p.view.center;
+			return {
+				color: c.colors[colorIndex],
+				colorIndex,
+			}
+		}
+
+		function getDirection(x, y) {
+			const fM = c.measure;
+			const hM = c.measure / 2;
+
+			const roll1 = Math.floor(Math.random() * 4);
+			const roll2 = Math.floor(Math.random() * 8);
+			const directionIndex = roll1 === 0 || roll2 === 0 ? 0 : Math.floor(Math.random() * 4);
+
+			return {
+				direction: [
+					[[x, y], [x, y + fM]], // n to s (left)
+					[[x + fM, y], [x + fM, y + fM]], // n to s (right)
+					[[x, y], [x + fM, y + fM]], // nw to se
+					[[x + fM, y], [x, y + fM]], // ne to sw
+				][directionIndex],
+				directionIndex,
+			}
 		}
 
 		function drawSquare(pointA, pointB, options) {
