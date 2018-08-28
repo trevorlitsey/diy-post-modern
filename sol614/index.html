@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+
+<body>
+
+	<svg id="draw"></svg>
+
+
+	<style>
+		body {
+			margin: 0;
+		}
+
+		svg {
+			width: 100vw;
+			height: 100vh;
+		}
+	</style>
+
+
+	<script src="../js/two.js"></script>
+	<script>
+
+		// TODO:
+		// 1. Make line of squares of varying widths and heights
+		// 2. TBD...
+
+		var elem = document.getElementById('draw');
+		var params = { width: window.innerWidth, height: window.innerHeight };
+		var two = new Two(params).appendTo(elem);
+
+		const windowWidth = window.innerWidth;
+		const windowHeight = window.innerHeight;
+
+		const rects = [];
+
+		for (let i = 0; i < windowWidth;) {
+
+			const [rectWidth, rectHeight] = [Math.round(Math.random() * 300 + 50), Math.round(Math.random() * 300 + 50)];
+			const [rectX, rectY] = [i + rectWidth / 2 + 4, rectHeight / 2 + 4];
+
+			const rect = two.makeRectangle(rectX, rectY, rectWidth, rectHeight);
+			rect.linewidth = 8;
+
+			rects.push(rect);
+			i += rectWidth;
+		}
+
+		const outerRect = two.makeRectangle(windowWidth / 2, windowHeight / 2, windowWidth - 8, windowHeight - 8);
+		outerRect.linewidth = 8;
+		outerRect.fill = 'rgba(0,0,0,0)'
+		// Don't forget to tell two to render everything
+		// to the screen
+		two.update();
+
+	</script>
+
+</body>
+
+</html>
